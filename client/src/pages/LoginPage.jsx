@@ -1,16 +1,18 @@
 import { Link, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import toastMessage from "../common/toastMessage";
 import axios from "axios";
+import { UserContext } from "../UserContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const {setUser} = useContext(UserContext);
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -27,11 +29,19 @@ const LoginPage = () => {
       );
     } else {
       try {
-        await axios.post("/login", {
+        const {data} = await axios.post("/login", {
           email,
           password,
         });
-        setIsLogin(true);
+        console.log("Data test: ", data)
+        setUser(data);
+        toastMessage(
+          "success",
+          "Login successfully"
+        );
+        // setTimeout(() => {
+        //   setIsLogin(true)
+        // },1200)
       } catch (err) {
         toastMessage("error", err.response.data.error);
       }
@@ -41,6 +51,10 @@ const LoginPage = () => {
   useEffect(() => {
     <Navigate to={"/"} />;
   }, [isLogin]);
+
+  if(isLogin){
+    return<Navigate to={'/'} />
+  }
 
   return (
     <>

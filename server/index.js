@@ -15,9 +15,14 @@ const generateRandomString = require("./randomString");
 
 const jwtSecret = generateRandomString(10);
 
+const cookieParser = require("cookie-parser");
+
 require("dotenv").config();
 
 app.use(express.json());
+
+app.use(cookieParser)
+
 app.use(
   cors({
     credentials: true,
@@ -74,7 +79,7 @@ app.post("/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token).json({ success: "Login successfully" });
+          res.cookie("token", token).json({ user: existingUser });
         }
       );
     } else {
@@ -88,4 +93,9 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
+app.get('/profile', (req, res) => {
+  const {token} = req.cookies;
+  res.json({token})
+})
 app.listen(4000);

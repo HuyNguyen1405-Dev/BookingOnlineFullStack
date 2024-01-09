@@ -7,7 +7,7 @@ const toastMessage = (type, message) => {
     case "success":
       toast.success(message, {
         position: "top-right",
-        autoClose: 4000,
+        autoClose: 1000,
         pauseOnHover: true,
         draggable: true,
         // theme: "dark",
