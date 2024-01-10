@@ -3,9 +3,8 @@ import { UserContext } from "./UserContext";
 import { useContext } from "react";
 
 const Header = () => {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
-  console.log("Data luu vao context: ", user)
   return (
     <>
       <header className="flex justify-between">
@@ -50,7 +49,7 @@ const Header = () => {
           </button>
         </div>
         <Link
-          to={"/login"}
+          to={user ? "/Account" : "/login"}
           className="flex items-center gap-2 border border-gray-300 rounded-full py-2 px-4 "
         >
           <svg
@@ -82,9 +81,7 @@ const Header = () => {
             </svg>
           </div>
 
-          {/* {!!user && (
-            {user.name}
-          )} */}
+          {!!user && <div>{user.name}</div>}
         </Link>
       </header>
     </>

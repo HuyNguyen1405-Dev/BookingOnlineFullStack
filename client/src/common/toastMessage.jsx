@@ -2,7 +2,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const toastMessage = (type, message) => {
-  console.log("Huy test", type);
   switch (type) {
     case "success":
       toast.success(message, {

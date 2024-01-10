@@ -1,6 +1,9 @@
 const express = require("express");
+
 const app = express();
+
 const cors = require("cors");
+
 const mongoose = require("mongoose");
 
 const bcrypt = require("bcryptjs");
@@ -11,9 +14,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwt = require("jsonwebtoken");
 
-const generateRandomString = require("./randomString");
-
-const jwtSecret = generateRandomString(10);
+const jwtSecret = "fasefraw4r5r3wq45wdfgw34twdfg";
 
 const cookieParser = require("cookie-parser");
 
@@ -21,12 +22,12 @@ require("dotenv").config();
 
 app.use(express.json());
 
-app.use(cookieParser)
+app.use(cookieParser());
 
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173",
+    origin: "http://127.0.0.1:5173",
   })
 );
 
@@ -66,6 +67,11 @@ app.post("/register", async (req, res) => {
   }
 });
 
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "None",
+};
+
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -74,7 +80,11 @@ app.post("/login", async (req, res) => {
     const checkPass = bcrypt.compareSync(password, existingUser.password);
     if (checkPass) {
       jwt.sign(
-        { email: existingUser.email, id: existingUser.id },
+        {
+          email: existingUser.email,
+          id: existingUser._id,
+          name: existingUser.name,
+        },
         jwtSecret,
         {},
         (err, token) => {
@@ -94,8 +104,16 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get('/profile', (req, res) => {
-  const {token} = req.cookies;
-  res.json({token})
-})
+app.get("/profile", (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const { name, email, _id } = await User.findById(userData.id);
+      res.json({ name, email, _id });
+    });
+  } else {
+    res.json(null);
+  }
+});
 app.listen(4000);
